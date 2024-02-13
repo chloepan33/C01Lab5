@@ -19,6 +19,12 @@ jobs:
       matrix:
         node-version: [20.x]
 
+    services:
+      mongodb:
+        image: mongo
+        ports:
+          - 27017:27017
+
     steps:
       - uses: actions/checkout@v3
 
@@ -26,5 +32,19 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm i
-      - run: npm test
+      - name: Install MongoDB
+        run: sleep 5 && mongod --bind_ip_all &
+
+      - name: Wait for MongoDB to start
+        run: sleep 10
+      - name: Install dependencies
+        run: npm i
+
+      - name: Start server
+        run: npm start &
+
+      - name: Wait for server to start
+        run: sleep 10
+
+      - name: Run tests
+        run: npm test
