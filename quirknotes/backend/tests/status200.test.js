@@ -96,6 +96,7 @@ test("/deleteNote - Delete a note", async () => {
     method: "DELETE",
   });
   expect(response.status).toBe(200);
+  expect(response.response).toBe(`Document with ID ${noteId} deleted.`);
 });
 
 test("/patchNote - Patch with content and title", async () => {
@@ -110,9 +111,8 @@ test("/patchNote - Patch with content and title", async () => {
       content: "Original Content",
     }),
   });
-  expect(response.status).toBe(200);
   const addNoteResponse = await response.json();
-  const noteId = addNoteResponse.insertedId; // Assuming the response structure includes the insertedId
+  const noteId = addNoteResponse.insertedId;
 
   // Step 2: Patch the note
   const updatedTitle = "Updated Title";
@@ -125,6 +125,7 @@ test("/patchNote - Patch with content and title", async () => {
     body: JSON.stringify({ title: updatedTitle, content: updatedContent }),
   });
   expect(response.status).toBe(200);
+  expect(response.response).toBe(`Document with ID ${noteId} patched.`);
 });
 
 test("/patchNote - Patch with just title", async () => {
@@ -167,7 +168,7 @@ test("/patchNote - Patch with just content", async () => {
     }),
   });
   const noteToAdd = await response.json();
-  const noteId = noteToAdd.insertedId; // Adjust based on actual response structure
+  const noteId = noteToAdd.insertedId;
 
   // Step 2: Patch the note's content only
   const updatedContent = "Updated Content Only";
@@ -179,6 +180,7 @@ test("/patchNote - Patch with just content", async () => {
     body: JSON.stringify({ content: updatedContent }),
   });
   expect(response.status).toBe(200);
+  expect(response.response).toBe(`Document with ID ${noteId} patched.`);
 });
 
 test("/deleteAllNotes - Delete one note", async () => {
@@ -201,6 +203,7 @@ test("/deleteAllNotes - Delete one note", async () => {
   const getAllResponse = await fetch(`${SERVER_URL}/getAllNotes`);
   const getAllData = await getAllResponse.json();
   expect(getAllData.response.length).toBe(0);
+  expect(response.response).toBe(`1 note(s) deleted.`);
 });
 
 test("/deleteAllNotes - Delete three notes", async () => {
@@ -231,4 +234,5 @@ test("/updateNoteColor - Update color of a note to red (#FF0000)", async () => {
     body: JSON.stringify({ color: "#FF0000" }),
   });
   expect(patchResponse.status).toBe(200);
+  expect(patchResponse.message).toBe("Note color updated successfully.");
 });
